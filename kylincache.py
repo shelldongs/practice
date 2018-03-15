@@ -43,6 +43,7 @@ class KylinCache(object):
 
     def _clean_data(self):
         if self.count > self.max_size - 1:
+            tmp_count = self.count
             data_expire_list = dict_sorted(self.data_expire)
             
             clean_len = int(self.max_size * (1 - self.CLEAN_DATA_PERCENT))
@@ -53,7 +54,7 @@ class KylinCache(object):
                 del self.data_expire[key]
                 self.count -= 1
 
-            for i in range(clean_len, self.count):
+            for i in range(clean_len, tmp_count):
                 d = data_expire_list[i]
                 key = d[0]
                 expire = d[1]
