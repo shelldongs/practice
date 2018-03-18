@@ -10,7 +10,7 @@ def dict_sorted(d):
 class KylinCache(object):
     TIMEOUT = 10
     MAX_SIZE = 100
-    CLEAN_DATA_PERCENT = 2 / 3.0
+    CULL_FREQUENCY = 3
 
     def __init__(self, timeout=None, max_size=None):
         self.data = {}
@@ -46,7 +46,7 @@ class KylinCache(object):
             tmp_count = self.count
             data_expire_list = dict_sorted(self.data_expire)
             
-            clean_len = int(self.max_size * (1 - self.CLEAN_DATA_PERCENT))
+            clean_len = int(self.max_size * (1.0 / self.CULL_FREQUENCY))
             
             for i in range(clean_len):
                 key = data_expire_list[i][0]
@@ -96,7 +96,8 @@ class KylinCache(object):
 
         def wrapper(func):
             def _wrapper(*args, **kwargs):
-                key = args[0]
+                key = repr(args[0]) + repr(func)
+                print key
                 value = self.get(key)
                 if value:
                     print 'get cache'
